@@ -1,43 +1,24 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE_FRONTEND = "mini-hospital-frontend"
-        DOCKER_IMAGE_BACKEND = "mini-hospital-backend"
-    }
-
     stages {
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/Rotanak3005/mini-hospital-booking.git'
-            }
-        }
-
         stage('Build Frontend') {
             steps {
-                script {
-                    dir('src/frontend') {
-                        sh 'docker build -t $DOCKER_IMAGE_FRONTEND .'
-                    }
+                dir('src/frontend') {
+                    sh 'docker build -t mini-frontend .'
                 }
             }
         }
-
         stage('Build Backend') {
             steps {
-                script {
-                    dir('src/backend') {
-                        sh 'docker build -t $DOCKER_IMAGE_BACKEND .'
-                    }
+                dir('src/backend') {
+                    sh 'docker build -t mini-backend .'
                 }
             }
         }
-
-        stage('Deploy to Swarm') {
+        stage('Deploy (Local Test)') {
             steps {
-                script {
-                    sh 'docker stack deploy -c docker-compose.yml mini-hospital'
-                }
+                sh 'docker-compose up -d'
             }
         }
     }
